@@ -6,6 +6,16 @@ import { createSelector } from 'reselect';
 
 const selectGlobal = (state) => state.global;
 
+const makeSelectAnswers = () => createSelector(
+  selectGlobal,
+  (globalState) => globalState.answers
+);
+
+const makeSelectQuestions = () => createSelector(
+  selectGlobal,
+  (globalState) => globalState.questions
+);
+
 const makeSelectCurrentUser = () => createSelector(
   selectGlobal,
   (globalState) => globalState.currentUser
@@ -28,6 +38,8 @@ const makeSelectRepos = () => createSelector(
 
 export {
   selectGlobal,
+  makeSelectAnswers,
+  makeSelectQuestions,
   makeSelectCurrentUser,
   makeSelectLoading,
   makeSelectError,

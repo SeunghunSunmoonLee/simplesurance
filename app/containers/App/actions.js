@@ -19,6 +19,7 @@ import {
   LOAD_REPOS,
   LOAD_REPOS_SUCCESS,
   LOAD_REPOS_ERROR,
+  SAVE_USER_ANSWERS,
 } from './constants';
 
 /**
@@ -47,7 +48,12 @@ export function reposLoaded(repos, username) {
     username,
   };
 }
-
+export function saveUserAnswers(answers) {
+  return {
+    type: SAVE_USER_ANSWERS,
+    answers,
+  };
+}
 /**
  * Dispatched when loading the repositories fails
  *

@@ -11,11 +11,12 @@
  */
 
 import update from 'immutability-helper';
-
+import data from './data.json'
 import {
   LOAD_REPOS_SUCCESS,
   LOAD_REPOS,
   LOAD_REPOS_ERROR,
+  SAVE_USER_ANSWERS,
 } from './constants';
 
 // The initial state of the App
@@ -26,8 +27,9 @@ const initialState = {
   userData: {
     repositories: false,
   },
+  user: {answers: []},
+  questions: data.questions,
 };
-
 function appReducer(state = initialState, action) {
   switch (action.type) {
     case LOAD_REPOS:
@@ -44,6 +46,10 @@ function appReducer(state = initialState, action) {
       });
     case LOAD_REPOS_ERROR:
       return { ...state, loading: false, error: action.error };
+    case SAVE_USER_ANSWERS:
+      return { ...state,
+        user: {answers: action.answers},
+      };
     default:
       return state;
   }

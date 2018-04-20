@@ -14,20 +14,22 @@ import { createStructuredSelector } from 'reselect';
 
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
-import { makeSelectRepos, makeSelectLoading, makeSelectError } from 'containers/App/selectors';
+import { makeSelectAnswers, makeSelectQuestions, makeSelectRepos, makeSelectLoading, makeSelectError } from 'containers/App/selectors';
 import H2 from 'components/H2';
-import ReposList from 'components/ReposList';
+import WizardForm from 'components/WizardForm';
 import AtPrefix from './AtPrefix';
 import CenteredSection from './CenteredSection';
 import Form from './Form';
 import Input from './Input';
 import Section from './Section';
 import messages from './messages';
-import { loadRepos } from '../App/actions';
+import { loadRepos, saveUserAnswers } from '../App/actions';
 import { changeUsername } from './actions';
 import { makeSelectUsername } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
+
+import showResults from './showResults'
 
 export class HomePage extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   /**
@@ -37,10 +39,11 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
     if (this.props.username && this.props.username.trim().length > 0) {
       this.props.onSubmitForm();
     }
+    console.log("this.props.questions", this.props.questions)
   }
 
   render() {
-    const { loading, error, repos } = this.props;
+    const { loading, error, repos, questions } = this.props;
     const reposListProps = {
       loading,
       error,
@@ -63,25 +66,7 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
             </p>
           </CenteredSection>
           <Section>
-            <H2>
-              <FormattedMessage {...messages.trymeHeader} />
-            </H2>
-            <Form onSubmit={this.props.onSubmitForm}>
-              <label htmlFor="username">
-                <FormattedMessage {...messages.trymeMessage} />
-                <AtPrefix>
-                  <FormattedMessage {...messages.trymeAtPrefix} />
-                </AtPrefix>
-                <Input
-                  id="username"
-                  type="text"
-                  placeholder="mxstbr"
-                  value={this.props.username}
-                  onChange={this.props.onChangeUsername}
-                />
-              </label>
-            </Form>
-            <ReposList {...reposListProps} />
+            <WizardForm questions={questions} onSubmit={showResults} />
           </Section>
         </div>
       </article>
@@ -111,10 +96,13 @@ export function mapDispatchToProps(dispatch) {
       if (evt !== undefined && evt.preventDefault) evt.preventDefault();
       dispatch(loadRepos());
     },
+    saveUserAnswers: (answers) => dispatch(saveUserAnswers(answers)),
   };
 }
 
 const mapStateToProps = createStructuredSelector({
+  answers: makeSelectAnswers(),
+  questions: makeSelectQuestions(),
   repos: makeSelectRepos(),
   username: makeSelectUsername(),
   loading: makeSelectLoading(),
