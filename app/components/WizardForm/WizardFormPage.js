@@ -1,17 +1,9 @@
 import React, {Fragment} from 'react'
 import {Field, reduxForm} from 'redux-form'
-// import {
-//   SelectField,
-//   TextField,
-//   DatePickerField,
-//   NumberField,
-//   RadioField,
-// } from 'redux-form-antd'
 import validate from './validate'
 import renderField from './renderField'
 import moment from 'moment'
 import { DatePicker, Form, Input, Radio, Select, Checkbox, Button } from "antd";
-// import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
 import uuid from 'uuid/v4';
@@ -90,25 +82,7 @@ const ADatePicker = makeDatePickerField(DatePicker);
 
 const WizardFormPage = props => {
   const {handleSubmit,  pristine, reset, submitting, onSubmit, previousPage, nextPage, question, finalSubmit} = props
-  // let type = '';
-  // switch (question[0].type) {
-  //   case 'string':
-  //     type="text"
-  //     break;
-  //   case 'date':
-  //     type="text"
-  //     break;
-  //   case 'number':
-  //     type="text"
-  //     break;
-  //   case 'boolean':
-  //     type="radio"
-  //     break;
-  // }
-  // const customHandleSubmit = (values) => {
-  //   console.log("values", values)
-  //   nextPage();
-  // }
+
   return (
       <form onSubmit={handleSubmit}>
         {question[0].type == 'string' &&

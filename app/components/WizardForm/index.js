@@ -12,7 +12,6 @@ class WizardForm extends React.Component {
     this.finalSubmit = this.finalSubmit.bind(this)
     this.state = {
       page: 0,
-      submitted: false,
     }
   }
   componentDidMount() {
