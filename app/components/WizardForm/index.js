@@ -1,23 +1,23 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import WizardFormPage from './WizardFormPage'
+import { connect } from 'react-redux';
+import { finalSubmitForm} from '../../containers/App/actions';
 
-import WizardFormFirstPage from './WizardFormFirstPage'
-import WizardFormSecondPage from './WizardFormSecondPage'
-import WizardFormThirdPage from './WizardFormThirdPage'
-// import WizardFormPage from './WizardFormPage'
 class WizardForm extends React.Component {
   constructor(props) {
     super(props)
     this.nextPage = this.nextPage.bind(this)
     this.previousPage = this.previousPage.bind(this)
+    this.finalSubmit = this.finalSubmit.bind(this)
     this.state = {
-      page: 0
+      page: 0,
+      submitted: false,
     }
   }
   componentDidMount() {
     let totalQuestions = ["A01"]
-    let wizardFormArray = [<WizardFormPage page="0" question={ this.props.questions ? this.props.questions.filter(question => question.id=="A01") : {}} onSubmit={this.nextPage}/>]
+    let wizardFormArray = [<WizardFormPage {...this.props} page="0" onSubmit={this.nextPage} nextPage={this.nextPage} question={ this.props.questions ? this.props.questions.filter(question => question.id=="A01") : {}} />]
 
     if(this.props.questions) {
 
@@ -29,13 +29,24 @@ class WizardForm extends React.Component {
               page={index+1}
               question={this.props.questions.filter(questionn => questionn.id==question.next)}
               previousPage={this.previousPage}
+              nextPage={this.nextPage}
               onSubmit={this.nextPage}
+              finalSubmit={this.finalSubmit.bind(this)}
+              {...this.props}
             />)
         }
       })
+      wizardFormArray.push(
+        <div>
+          <h2>Thank you! We will get back to you soon!</h2>
+        </div>
+      )
     }
     this.setState({wizardFormArray: wizardFormArray})
     const totalQuestionsNumber = totalQuestions.length
+  }
+  finalSubmit() {
+    this.props.finalSubmitForm()
   }
   nextPage() {
     this.setState({page: this.state.page + 1})
@@ -46,69 +57,29 @@ class WizardForm extends React.Component {
   }
 
   render() {
-    const {onSubmit} = this.props
     const {page} = this.state
-
-   //  totalQuestions.map(questionId, index => {
-   //
-   //  })
-   //  const WizardFormPage = () => {
-   //    switch(this.state.page) {
-   //     case states.WELCOME:
-   //       return(<Welcome next={this._next}/>);
-   //     case states.VEHICLE_CHOOSE:
-   //       return(<VehicleChoose
-   //         back={this._back}
-   //         next={this._next}/>);
-   //     case states.CAR:
-   //       return(<CarForm
-   //         saveForm={this._saveVehicle}
-   //         back={this._back}
-   //         next={this._next} />);
-   //     case states.BOAT:
-   //       return(<BoatForm
-   //         saveForm={this._saveVehicle}
-   //         back={this._back}
-   //         next={this._next} />);
-   //     case states.BOAT_DETAIL:
-   //      return(<BoatDetail
-   //        back={this._back}
-   //        next={this._next} />);
-   //     case states.CONFIRM:
-   //       return(<Confirm
-   //         vehicles={this.state.vehicles}
-   //         back={this._back}
-   //         next={this._next} />);
-   //     default:
-   //       return(<Welcome next={this._next}/>);
-   //   }
-   // }
-   // {wizardFormArray[this.state.page]}
-
-
-   // {page === 1 && <WizardFormFirstPage onSubmit={this.nextPage} />}
-   // {page === 2 &&
-   //   <WizardFormSecondPage
-   //     previousPage={this.previousPage}
-   //     onSubmit={this.nextPage}
-   //   />}
-   // {page === 3 &&
-   //   <WizardFormThirdPage
-   //     previousPage={this.previousPage}
-   //     onSubmit={onSubmit}
-   //   />}
     return (
       <div>
 
-        {this.state.wizardFormArray && this.state.wizardFormArray[this.state.page]}
-
+        {(!this.state.submitted && this.state.wizardFormArray) && this.state.wizardFormArray[this.state.page]}
+        { this.props.submitted && Object.keys(this.props.formValue).map(key => {
+          return <h3>{`${key}: ${this.props.formValue[key]}`}</h3>
+        })}
       </div>
     )
   }
 }
 
-WizardForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired
+const mapStateToProps = (state, ownProps) => {
+  return {
+    submitted: state.global.submitted,
+  }
+}
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    dispatch,
+    finalSubmitForm: () => dispatch(finalSubmitForm()),
+  }
 }
 
-export default WizardForm
+export default connect(mapStateToProps, mapDispatchToProps)(WizardForm)

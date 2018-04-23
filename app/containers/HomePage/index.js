@@ -11,10 +11,11 @@ import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-
+import { Row, Col, Button } from 'antd';
+import {change} from 'redux-form'
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
-import { makeSelectAnswers, makeSelectQuestions, makeSelectRepos, makeSelectLoading, makeSelectError } from 'containers/App/selectors';
+import { makeGlobalState, makeFormValue, makeSelectAnswers, makeSelectQuestions, makeSelectRepos, makeSelectLoading, makeSelectError } from 'containers/App/selectors';
 import H2 from 'components/H2';
 import WizardForm from 'components/WizardForm';
 import AtPrefix from './AtPrefix';
@@ -23,7 +24,7 @@ import Form from './Form';
 import Input from './Input';
 import Section from './Section';
 import messages from './messages';
-import { loadRepos, saveUserAnswers } from '../App/actions';
+import { finalSubmitForm, loadRepos, saveUserAnswers } from '../App/actions';
 import { changeUsername } from './actions';
 import { makeSelectUsername } from './selectors';
 import reducer from './reducer';
@@ -43,33 +44,29 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
   }
 
   render() {
-    const { loading, error, repos, questions } = this.props;
-    const reposListProps = {
-      loading,
-      error,
-      repos,
-    };
+    const { questions, formValue } = this.props;
+    // console.log("{this.props.formValue}", this.props.formValue)
+    // {this.props.formValue}
 
     return (
-      <article>
-        <Helmet>
-          <title>Home Page</title>
-          <meta name="description" content="A React.js Boilerplate application homepage" />
-        </Helmet>
-        <div>
-          <CenteredSection>
-            <H2>
-              <FormattedMessage {...messages.startProjectHeader} />
-            </H2>
-            <p>
-              <FormattedMessage {...messages.startProjectMessage} />
-            </p>
-          </CenteredSection>
-          <Section>
-            <WizardForm questions={questions} onSubmit={showResults} />
-          </Section>
-        </div>
-      </article>
+      <div>
+        <article>
+          <Helmet>
+            <title>Home Page</title>
+            <meta name="description" content="A React.js Boilerplate application homepage" />
+          </Helmet>
+        </article>
+        <Row style={{ padding: 15, display: 'flex', textAlign: 'center', justifyContent: 'center' }}>
+          <Col span={24} >
+            <h1>Claim form</h1>
+          </Col>
+        </Row>
+        <Row style={{ padding: 15, display: 'flex', textAlign: 'center', justifyContent: 'center' }}>
+          <Col span={24} >
+            <WizardForm finalSubmitForm={this.props.finalSubmitForm} formValue={formValue} questions={questions} />
+          </Col>
+        </Row>
+      </div>
     );
   }
 }
@@ -91,6 +88,8 @@ HomePage.propTypes = {
 
 export function mapDispatchToProps(dispatch) {
   return {
+    dispatch,
+    finalSubmitForm: () => dispatch(finalSubmitForm()),
     onChangeUsername: (evt) => dispatch(changeUsername(evt.target.value)),
     onSubmitForm: (evt) => {
       if (evt !== undefined && evt.preventDefault) evt.preventDefault();
@@ -101,6 +100,8 @@ export function mapDispatchToProps(dispatch) {
 }
 
 const mapStateToProps = createStructuredSelector({
+  globalState: makeGlobalState(),
+  formValue: makeFormValue(),
   answers: makeSelectAnswers(),
   questions: makeSelectQuestions(),
   repos: makeSelectRepos(),
@@ -108,7 +109,6 @@ const mapStateToProps = createStructuredSelector({
   loading: makeSelectLoading(),
   error: makeSelectError(),
 });
-
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
 
 const withReducer = injectReducer({ key: 'home', reducer });

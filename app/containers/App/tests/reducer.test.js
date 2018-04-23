@@ -1,5 +1,7 @@
 import update from 'immutability-helper';
 import appReducer from '../reducer';
+import data from '../data.json'
+
 import {
   loadRepos,
   reposLoaded,
@@ -16,6 +18,8 @@ describe('appReducer', () => {
       userData: {
         repositories: false,
       },
+      user: {answers: []},
+      questions: data.questions,
     };
   });
 

@@ -1,58 +1,100 @@
-/**
- * Testing our Button component
- */
-
+import { shallow, mount } from 'enzyme';
 import React from 'react';
-import { mount } from 'enzyme';
+import {store} from '../../../containers/app'
+// import { IntlProvider } from 'react-intl';
+import data from '../../../containers/App/data.json';
+import WizardFormPage from '../WizardFormPage';
+import WizardForm from '../index';
 
-import Button from '../index';
-
-const handleRoute = () => {};
-const href = 'http://mxstbr.com';
-const children = (<h1>Test</h1>);
-const renderComponent = (props = {}) => mount(
-  <Button href={href} {...props}>
-    {children}
-  </Button>
-);
-
-describe('<Button />', () => {
-  it('should render an <a> tag if no route is specified', () => {
-    const renderedComponent = renderComponent({ href });
-    expect(renderedComponent.find('a').length).toEqual(1);
+describe('<WizardForm />', () => {
+  it('should render WizardFormPage firstpage', () => {
+    let subject = null
+  	let submitting, touched, error, reset, onSave, onSaveResponse, handleSubmit
+  	beforeEach(() => {
+  		submitting = false
+  		touched = false
+  		error = null
+  		reset = sinon.spy()
+  		onSaveResponse = Promise.resolve()
+  		handleSubmit = fn => fn
+  	})
+    const props = {
+			onSave,
+			submitting: submitting,
+			// The real redux form has many properties for each field,
+			// including onChange and onBlur handlers. We only need to provide
+			// the ones that will change the rendered output.
+			fields: {
+				A01: {
+					value: '',
+					touched: touched,
+					error: error
+				}
+			},
+			handleSubmit,
+			reset
+		}
+    // const firstQuestion = {
+    //   id: 'A01',
+    //   next: 'A02',
+    //   reply: '',
+    //   text: 'What happened to your product?',
+    //   type: 'string',
+    // }
+    const html = `<div><ReduxForm page="0" question={{"id": "A01", "next": "A02", "reply": "", "text": "What happened to your product?", "type": "string"}} /></div>`
+    const text = "What happened to your product?"
+    const nextPage = () => {}
+    // const renderedComponent = shallow(
+    //   <WizardForm store={store} questions={data.questions} />
+    // ).dive();
+    const renderedComponent2 = shallow(
+      <WizardFormPage {...props} store={store} page="0" onSubmit={jest.fn()} nextPage={jest.fn()} question={data.questions[0]} />
+    ).dive();
+    expect(renderedComponent2.html()).toEqual(html);
+    // expect(renderedComponent.contains(
+    //   <WizardFormPage page="0" onSubmit={jest.fn()} nextPage={jest.fn()} question={data.questions[0]} />
+    // )).toEqual(true);
   });
 
-  it('should render a <button> tag to change route if the handleRoute prop is specified', () => {
-    const renderedComponent = renderComponent({ handleRoute });
-    expect(renderedComponent.find('button').length).toEqual(1);
-  });
+  // it('should render an error if loading failed', () => {
+  //   const renderedComponent = mount(
+  //     <IntlProvider locale="en">
+  //       <WizardForm
+  //         loading={false}
+  //         error={{ message: 'Loading failed!' }}
+  //       />
+  //     </IntlProvider>
+  //   );
+  //   expect(renderedComponent.text()).toMatch(/Something went wrong/);
+  // });
 
-  it('should have children', () => {
-    const renderedComponent = renderComponent();
-    expect(renderedComponent.contains(children)).toEqual(true);
-  });
+  // it('should render the repositories if loading was successful', () => {
+  //   const repos = [{
+  //     owner: {
+  //       login: 'mxstbr',
+  //     },
+  //     html_url: 'https://github.com/react-boilerplate/react-boilerplate',
+  //     name: 'react-boilerplate',
+  //     open_issues_count: 20,
+  //     full_name: 'react-boilerplate/react-boilerplate',
+  //   }];
+  //   const renderedComponent = shallow(
+  //     <WizardForm
+  //       repos={repos}
+  //       error={false}
+  //     />
+  //   );
+  //
+  //   expect(renderedComponent.contains(<List items={repos} component={RepoListItem} />)).toEqual(true);
+  // });
 
-  it('should handle click events', () => {
-    const onClickSpy = jest.fn();
-    const renderedComponent = renderComponent({ onClick: onClickSpy });
-    renderedComponent.find('a').simulate('click');
-    expect(onClickSpy).toHaveBeenCalled();
-  });
+  it('should not render anything if nothing is provided', () => {
+    const renderedComponent = shallow(
+      <WizardForm
+        question={{}}
+      />
+    );
 
-  it('should have a className attribute', () => {
-    const renderedComponent = renderComponent();
-    expect(renderedComponent.find('a').prop('className')).toBeDefined();
-  });
-
-  it('should not adopt a type attribute when rendering an <a> tag', () => {
-    const type = 'text/html';
-    const renderedComponent = renderComponent({ href, type });
-    expect(renderedComponent.find('a').prop('type')).toBeUndefined();
-  });
-
-  it('should not adopt a type attribute when rendering a button', () => {
-    const type = 'submit';
-    const renderedComponent = renderComponent({ handleRoute, type });
-    expect(renderedComponent.find('button').prop('type')).toBeUndefined();
+    expect(renderedComponent.html()).toEqual("<div></div>");
   });
 });

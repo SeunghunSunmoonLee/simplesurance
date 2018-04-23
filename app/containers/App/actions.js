@@ -20,6 +20,7 @@ import {
   LOAD_REPOS_SUCCESS,
   LOAD_REPOS_ERROR,
   SAVE_USER_ANSWERS,
+  FINAL_SUBMIT_FORM
 } from './constants';
 
 /**
@@ -65,5 +66,10 @@ export function repoLoadingError(error) {
   return {
     type: LOAD_REPOS_ERROR,
     error,
+  };
+}
+export function finalSubmitForm() {
+  return {
+    type: FINAL_SUBMIT_FORM,
   };
 }

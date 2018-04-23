@@ -3,8 +3,23 @@
  */
 
 import { createSelector } from 'reselect';
+import {
+  getFormValues,
+} from 'redux-form'
 
+const selectHighestState = (state) => state;
 const selectGlobal = (state) => state.global;
+const selectForm = (state) => state.form;
+
+const makeGlobalState = () => createSelector(
+  selectHighestState,
+  (highestState) => highestState
+);
+
+const makeFormValue = () => createSelector(
+  selectHighestState,
+  (highestState) => getFormValues('wizard')(highestState)
+);
 
 const makeSelectAnswers = () => createSelector(
   selectGlobal,
@@ -37,7 +52,8 @@ const makeSelectRepos = () => createSelector(
 );
 
 export {
-  selectGlobal,
+  makeGlobalState,
+  makeFormValue,
   makeSelectAnswers,
   makeSelectQuestions,
   makeSelectCurrentUser,

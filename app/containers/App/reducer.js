@@ -17,6 +17,7 @@ import {
   LOAD_REPOS,
   LOAD_REPOS_ERROR,
   SAVE_USER_ANSWERS,
+  FINAL_SUBMIT_FORM,
 } from './constants';
 
 // The initial state of the App
@@ -29,6 +30,7 @@ const initialState = {
   },
   user: {answers: []},
   questions: data.questions,
+  submitted: false,
 };
 function appReducer(state = initialState, action) {
   switch (action.type) {
@@ -50,6 +52,10 @@ function appReducer(state = initialState, action) {
       return { ...state,
         user: {answers: action.answers},
       };
+      case FINAL_SUBMIT_FORM:
+        return { ...state,
+          submitted: true,
+        };
     default:
       return state;
   }
