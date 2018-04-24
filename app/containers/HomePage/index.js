@@ -40,13 +40,10 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
     if (this.props.username && this.props.username.trim().length > 0) {
       this.props.onSubmitForm();
     }
-    console.log("this.props.questions", this.props.questions)
   }
 
   render() {
     const { questions, formValue } = this.props;
-    // console.log("{this.props.formValue}", this.props.formValue)
-    // {this.props.formValue}
 
     return (
       <div>

@@ -1,12 +1,11 @@
 import React, {Fragment} from 'react'
 import {Field, reduxForm} from 'redux-form'
+import { connect } from 'react-redux';
 import validate from './validate'
 import renderField from './renderField'
 import moment from 'moment'
 import { DatePicker, Form, Input, Radio, Select, Checkbox, Button } from "antd";
-import 'react-datepicker/dist/react-datepicker.css';
 
-import uuid from 'uuid/v4';
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const { Option } = Select;
@@ -38,7 +37,9 @@ const tailFormItemLayout = {
 const required = value => {
   return (value ? undefined : 'Required')
 }
-
+const isNumber = value => {
+  return (!isNaN(value) ? undefined : 'Must be number')
+}
 const makeField = Component => ({ input, meta, children, hasFeedback, label, ...rest }) => {
   const hasError = meta.touched && meta.invalid;
   return (
@@ -67,12 +68,6 @@ const makeDatePickerField = Component => ({ input, meta, children, hasFeedback, 
     </FormItem>
   );
 };
-// const renderDatePicker = ({input, placeholder, defaultValue, meta: {touched, error} }) => (
-//   <div>
-//         <DatePicker {...input} dateForm="MM/DD/YYYY" selected={input.value ? moment(input.value) : null} />
-//         {touched && error && <span>{error}</span>}
-//   </div>
-// );
 const AInput = makeField(Input);
 const ARadioGroup = makeField(RadioGroup);
 const ASelect = makeField(Select);
@@ -80,7 +75,7 @@ const ACheckbox = makeField(Checkbox);
 const ATextarea = makeField(TextArea);
 const ADatePicker = makeDatePickerField(DatePicker);
 
-const WizardFormPage = props => {
+let WizardFormPage = props => {
   const {handleSubmit,  pristine, reset, submitting, onSubmit, previousPage, nextPage, question, finalSubmit} = props
 
   return (
@@ -108,7 +103,7 @@ const WizardFormPage = props => {
             name={question[0].id}
             component={AInput}
             label={question[0].text}
-            validate={required}
+            validate={isNumber}
             hasFeedback
           />
         }
@@ -141,8 +136,11 @@ const WizardFormPage = props => {
   )
 }
 
-export default reduxForm({
+WizardFormPage = reduxForm({
   form: 'wizard', // <------ same form name
   destroyOnUnmount: false, // <------ preserve form data
   forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
 })(WizardFormPage)
+
+WizardFormPage = connect()(WizardFormPage);
+export default WizardFormPage

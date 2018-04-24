@@ -53,6 +53,7 @@ const makeSelectRepos = () => createSelector(
 
 export {
   makeGlobalState,
+  selectGlobal,
   makeFormValue,
   makeSelectAnswers,
   makeSelectQuestions,

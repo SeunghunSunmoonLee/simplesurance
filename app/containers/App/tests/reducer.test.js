@@ -20,6 +20,7 @@ describe('appReducer', () => {
       },
       user: {answers: []},
       questions: data.questions,
+      submitted: false,
     };
   });
 

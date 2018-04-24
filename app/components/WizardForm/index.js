@@ -4,7 +4,7 @@ import WizardFormPage from './WizardFormPage'
 import { connect } from 'react-redux';
 import { finalSubmitForm} from '../../containers/App/actions';
 
-class WizardForm extends React.Component {
+export class WizardForm extends React.Component {
   constructor(props) {
     super(props)
     this.nextPage = this.nextPage.bind(this)
@@ -16,8 +16,7 @@ class WizardForm extends React.Component {
   }
   componentDidMount() {
     let totalQuestions = ["A01"]
-    let wizardFormArray = [<WizardFormPage {...this.props} page="0" onSubmit={this.nextPage} nextPage={this.nextPage} question={ this.props.questions ? this.props.questions.filter(question => question.id=="A01") : {}} />]
-
+    let wizardFormArray = [<WizardFormPage {...this.props} className="firstForm" page="0" onSubmit={this.nextPage} nextPage={this.nextPage} question={ this.props.questions ? this.props.questions.filter(question => question.id=="A01") : {}} />]
     if(this.props.questions) {
 
       this.props.questions.map((question, index) => {
@@ -58,11 +57,10 @@ class WizardForm extends React.Component {
   render() {
     const {page} = this.state
     return (
-      <div>
-
+      <div className="WizardFormPage">
         {(!this.state.submitted && this.state.wizardFormArray) && this.state.wizardFormArray[this.state.page]}
         { this.props.submitted && Object.keys(this.props.formValue).map(key => {
-          return <h3>{`${key}: ${this.props.formValue[key]}`}</h3>
+          return <h3>{`${this.props.questions.filter(question => question.id === key)[0].text}:`}<br/>{`${this.props.formValue[key]}`}</h3>
         })}
       </div>
     )
